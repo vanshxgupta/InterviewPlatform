@@ -3,9 +3,16 @@ import { google } from "@ai-sdk/google";
 
 import { db } from "@/firebase/client";
 import { getRandomInterviewCover } from "@/lib/utils";
+import { collection, addDoc } from "firebase/firestore";
+
+
+
+
 
 export async function POST(request: Request) {
   const { type, role, level, techstack, amount, userid } = await request.json();
+
+  console.log(userid)
 
   try {
     const { text: questions } = await generateText({
@@ -37,7 +44,7 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    await db.collection("interviews").add(interview);
+    await addDoc(collection(db, "interviews"), interview); // ✅ correct usage;
 
     return Response.json({ success: true }, { status: 200 });
   } catch (error) {
